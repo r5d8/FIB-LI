@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <vector>
+#include <map>
 using namespace std;
 
 #define UNDEF -1
@@ -15,7 +16,11 @@ vector<int> model;
 vector<int> modelStack;
 uint indexOfNextLitToPropagate;
 uint decisionLevel;
-
+map<int, vector<int>> occurs_list;
+/* Estructura de occurs_list:
+ * Cada posició del diccionari representa un literal en positiu o negatiu
+ * i conté un vector de clausules que el contenen.
+ */
 
 void readClauses( ){
   // Skip comments
@@ -27,11 +32,18 @@ void readClauses( ){
   // Read "cnf numVars numClauses"
   string aux;
   cin >> aux >> numVars >> numClauses;
-  clauses.resize(numClauses);  
+  clauses.resize(numClauses); 
+  occurs_list = map<int, vector<int>>();
+  
+   
   // Read clauses
   for (uint i = 0; i < numClauses; ++i) {
     int lit;
-    while (cin >> lit and lit != 0) clauses[i].push_back(lit);
+    while (cin >> lit and lit != 0) {
+		clauses[i].push_back(lit);
+		if (occurs_list.find(lit) == occurs_list.end()) occurs_list[lit] = vector<int>();
+		occurs_list[lit].push_back(i);
+	}
   }    
 }
 
@@ -61,9 +73,9 @@ bool propagateGivesConflict ( ) {
       int numUndefs = 0;
       int lastLitUndef = 0;
       for (uint k = 0; not someLitTrue and k < clauses[i].size(); ++k){
-	int val = currentValueInModel(clauses[i][k]);
-	if (val == TRUE) someLitTrue = true;
-	else if (val == UNDEF){ ++numUndefs; lastLitUndef = clauses[i][k]; }
+		int val = currentValueInModel(clauses[i][k]);
+		if (val == TRUE) someLitTrue = true;
+		else if (val == UNDEF){ ++numUndefs; lastLitUndef = clauses[i][k]; }
       }
       if (not someLitTrue and numUndefs == 0) return true; // conflict! all lits false
       else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);	
@@ -92,9 +104,20 @@ void backtrack(){
 
 // Heuristic for finding the next decision literal:
 int getNextDecisionLiteral(){
-  for (uint i = 1; i <= numVars; ++i) // stupid heuristic:
-    if (model[i] == UNDEF) return i;  // returns first UNDEF var, positively
-  return 0; // reurns 0 when all literals are defined
+	int min = 0;
+	for (uint i = 1; i <= numVars; ++i)
+	{
+		if (model[i] == UNDEF)
+		{
+			if (min == 0) {
+				min = i;
+				if (occurs_list[i].size() < occurs_list[-i].size()) min = -i;
+			}
+			else if (occurs_list[min].size() < occurs_list[-i].size()) min = -i;
+			else if (occurs_list[min].size() < occurs_list[i].size()) min = i;
+		}
+	}
+	return min;
 }
 
 void checkmodel(){
