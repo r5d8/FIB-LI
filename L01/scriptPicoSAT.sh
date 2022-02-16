@@ -14,8 +14,8 @@ show_elapsed_time() {
   echo "$((end-start)) s"
 }
 
-for f in ./random3SAT/vars-100*.cnf
-#for f in ./random3SAT/vars*.cnf
+#for f in ./random3SAT/vars-100*.cnf
+for f in ./random3SAT/vars*.cnf
 do
     echo
     echo "------------------"

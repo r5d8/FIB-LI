@@ -66,22 +66,37 @@ void setLiteralToTrue(int lit){
 
 
 bool propagateGivesConflict ( ) {
-  while ( indexOfNextLitToPropagate < modelStack.size() ) {
-    ++indexOfNextLitToPropagate;
-    for (uint i = 0; i < numClauses; ++i) {
-      bool someLitTrue = false;
-      int numUndefs = 0;
-      int lastLitUndef = 0;
-      for (uint k = 0; not someLitTrue and k < clauses[i].size(); ++k){
-		int val = currentValueInModel(clauses[i][k]);
-		if (val == TRUE) someLitTrue = true;
-		else if (val == UNDEF){ ++numUndefs; lastLitUndef = clauses[i][k]; }
-      }
-      if (not someLitTrue and numUndefs == 0) return true; // conflict! all lits false
-      else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);	
-    }    
-  }
-  return false;
+	while ( indexOfNextLitToPropagate < modelStack.size() ) {
+		for (int i : occurs_list[indexOfNextLitToPropagate])
+		{
+			bool someLitTrue = false;
+			int numUndefs = 0;
+			int lastLitUndef = 0;
+			for (uint k = 0; not someLitTrue and k < clauses[i].size(); ++k){
+				int val = currentValueInModel(clauses[i][k]);
+				if (val == TRUE) someLitTrue = true;
+				else if (val == UNDEF){ ++numUndefs; lastLitUndef = clauses[i][k]; }
+			}
+			if (not someLitTrue and numUndefs == 0) return true; // conflict! all lits false
+			else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);	
+		}
+		for (int i : occurs_list[-indexOfNextLitToPropagate])
+		{
+			bool someLitTrue = false;
+			int numUndefs = 0;
+			int lastLitUndef = 0;
+			for (uint k = 0; not someLitTrue and k < clauses[i].size(); ++k){
+				int val = currentValueInModel(clauses[i][k]);
+				if (val == TRUE) someLitTrue = true;
+				else if (val == UNDEF){ ++numUndefs; lastLitUndef = clauses[i][k]; }
+			}
+			if (not someLitTrue and numUndefs == 0) return true; // conflict! all lits false
+			else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);	
+		}
+	  
+		++indexOfNextLitToPropagate;   
+	}
+	return false;
 }
 
 
@@ -104,20 +119,20 @@ void backtrack(){
 
 // Heuristic for finding the next decision literal:
 int getNextDecisionLiteral(){
-	int min = 0;
+	int max = 0;
 	for (uint i = 1; i <= numVars; ++i)
 	{
 		if (model[i] == UNDEF)
 		{
-			if (min == 0) {
-				min = i;
-				if (occurs_list[i].size() < occurs_list[-i].size()) min = -i;
+			if (max == 0) {
+				max = i;
+				if (occurs_list[i].size() < occurs_list[-i].size()) max = -i;
 			}
-			else if (occurs_list[min].size() < occurs_list[-i].size()) min = -i;
-			else if (occurs_list[min].size() < occurs_list[i].size()) min = i;
+			else if (occurs_list[max].size() < occurs_list[-i].size()) max = -i;
+			else if (occurs_list[max].size() < occurs_list[i].size()) max = i;
 		}
 	}
-	return min;
+	return max;
 }
 
 void checkmodel(){
