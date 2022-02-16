@@ -67,7 +67,7 @@ void setLiteralToTrue(int lit){
 
 bool propagateGivesConflict ( ) {
 	while ( indexOfNextLitToPropagate < modelStack.size() ) {
-		for (int i : occurs_list[indexOfNextLitToPropagate])
+		for (int i : occurs_list[modelStack[indexOfNextLitToPropagate]])
 		{
 			bool someLitTrue = false;
 			int numUndefs = 0;
@@ -80,7 +80,7 @@ bool propagateGivesConflict ( ) {
 			if (not someLitTrue and numUndefs == 0) return true; // conflict! all lits false
 			else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);	
 		}
-		for (int i : occurs_list[-indexOfNextLitToPropagate])
+		for (int i : occurs_list[-modelStack[indexOfNextLitToPropagate]])
 		{
 			bool someLitTrue = false;
 			int numUndefs = 0;
