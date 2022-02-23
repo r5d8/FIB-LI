@@ -78,48 +78,46 @@ void update_conflict_counter()
 	}
 }
 
+bool tracta_clausules_on_apareix(int lit)
+{
+	for (int i : occurs_list[lit])
+	{
+		bool someLitTrue = false;
+		int numUndefs = 0;
+		int lastLitUndef = 0;
+		for (uint k = 0; not someLitTrue and k < clauses[i].size(); ++k){
+			int val = currentValueInModel(clauses[i][k]);
+			if (val == TRUE) someLitTrue = true;
+			else if (val == UNDEF){ ++numUndefs; lastLitUndef = clauses[i][k]; }
+		}
+		if (not someLitTrue and numUndefs == 0)
+		{
+			//cerr << "Ini " << decisionLevel;
+			update_conflict_counter();
+			for (uint k = 0; k < clauses[i].size(); ++k)
+			{
+				
+				int conflictiveVar = clauses[i][k];
+				//cerr << conflictiveVar << " ";
+				if (conflictiveVar < 0) conflictiveVar += -1;
+				nbConflicts[conflictiveVar]++;
+			}
+			//cerr << "Fin" << endl;
+			//peta després de fer el return. Segurament es per algo que retorno, o per com poso les dades. Mirar que passa
+			return true; // conflict! all lits false
+		}
+		else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);	
+	}
+	return false;
+}
 
 bool propagateGivesConflict ( ) {
 	while ( indexOfNextLitToPropagate < modelStack.size() ) {
-		int lit_for_occ = modelStack[indexOfNextLitToPropagate];
-		if (lit_for_occ < 0) lit_for_occ *= -1;
+		int lit = modelStack[indexOfNextLitToPropagate];
+		if (lit < 0) lit *= -1;
 		
-		for (int i : occurs_list[lit_for_occ*2-1])
-		{
-			bool someLitTrue = false;
-			int numUndefs = 0;
-			int lastLitUndef = 0;
-			for (uint k = 0; not someLitTrue and k < clauses[i].size(); ++k){
-				int val = currentValueInModel(clauses[i][k]);
-				if (val == TRUE) someLitTrue = true;
-				else if (val == UNDEF){ ++numUndefs; lastLitUndef = clauses[i][k]; }
-			}
-			if (not someLitTrue and numUndefs == 0)
-			{
-				update_conflict_counter();
-				for (uint k = 0; k < clauses[i].size(); ++k) nbConflicts[k]++;
-				return true; // conflict! all lits false
-			}
-			else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);	
-		}
-		for (int i : occurs_list[lit_for_occ*2])
-		{
-			bool someLitTrue = false;
-			int numUndefs = 0;
-			int lastLitUndef = 0;
-			for (uint k = 0; not someLitTrue and k < clauses[i].size(); ++k){
-				int val = currentValueInModel(clauses[i][k]);
-				if (val == TRUE) someLitTrue = true;
-				else if (val == UNDEF){ ++numUndefs; lastLitUndef = clauses[i][k]; }
-			}
-			if (not someLitTrue and numUndefs == 0)
-			{
-				update_conflict_counter();
-				for (uint k = 0; k < clauses[i].size(); ++k) nbConflicts[k]++;
-				return true; // conflict! all lits false
-			}
-			else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);	
-		}
+		if (tracta_clausules_on_apareix(lit*2-1)) return true;
+		if (tracta_clausules_on_apareix(lit*2)) return true;
 	  
 		++indexOfNextLitToPropagate;   
 	}
@@ -146,7 +144,8 @@ void backtrack(){
 
 // Heuristic for finding the next decision literal:
 int getNextDecisionLiteral(){
-	/*int max = 0;
+	/* Heuristica d'aparcions estàtica
+	int max = 0;
 	for (uint i = 1; i <= numVars; ++i)
 	{
 		if (model[i] == UNDEF)
@@ -160,7 +159,9 @@ int getNextDecisionLiteral(){
 		}
 	}
 	if (max%2 == 0) return -max/2;
-	return (max+1)/2;*/
+	return (max+1)/2;
+	//*/
+	///* Heuristica de conflictes fins el moment
 	int max = 0;
 	for (uint i = 1; i <= numVars; ++i)
 	{
@@ -171,6 +172,7 @@ int getNextDecisionLiteral(){
 		}
 	}
 	return max;
+	//*/
 }
 
 void checkmodel(){
