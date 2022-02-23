@@ -16,10 +16,14 @@ vector<int> model;
 vector<int> modelStack;
 uint indexOfNextLitToPropagate;
 uint decisionLevel;
-map<int, vector<int>> occurs_list;
+vector<int> nbConflicts;
+int conflict_counter = 0;
+vector<vector<int>> occurs_list;
 /* Estructura de occurs_list:
- * Cada posició del diccionari representa un literal en positiu o negatiu
- * i conté un vector de clausules que el contenen.
+ * Cada posició del vector representa un literal en positiu o negatiu
+ * i conté les clàusules en que apareix.
+ * Els literals potitius estaran en la posició 2*lit, 
+ * mentre que els negatius seran en 2*lit-1
  */
 
 void readClauses( ){
@@ -32,19 +36,19 @@ void readClauses( ){
   // Read "cnf numVars numClauses"
   string aux;
   cin >> aux >> numVars >> numClauses;
-  clauses.resize(numClauses); 
-  occurs_list = map<int, vector<int>>();
-  
+  clauses.resize(numClauses);
+  nbConflicts = vector<int>(numVars + 1, 0);
+  occurs_list = vector<vector<int>>(numVars * 2 + 1, vector<int>(0));
    
   // Read clauses
   for (uint i = 0; i < numClauses; ++i) {
     int lit;
     while (cin >> lit and lit != 0) {
 		clauses[i].push_back(lit);
-		if (occurs_list.find(lit) == occurs_list.end()) occurs_list[lit] = vector<int>();
-		occurs_list[lit].push_back(i);
+		if (lit < 0) occurs_list[(-lit)*2-1].push_back(i);
+		else occurs_list[lit*2].push_back(i);
 	}
-  }    
+  }
 }
 
 
@@ -64,10 +68,23 @@ void setLiteralToTrue(int lit){
   else model[-lit] = FALSE;		
 }
 
+void update_conflict_counter()
+{
+	conflict_counter ++;
+	if (conflict_counter >= 10000)
+	{
+		conflict_counter = 0;
+		for (uint i = 1; i <= numVars; ++i) nbConflicts[i] /= 2;
+	}
+}
+
 
 bool propagateGivesConflict ( ) {
 	while ( indexOfNextLitToPropagate < modelStack.size() ) {
-		for (int i : occurs_list[modelStack[indexOfNextLitToPropagate]])
+		int lit_for_occ = modelStack[indexOfNextLitToPropagate];
+		if (lit_for_occ < 0) lit_for_occ *= -1;
+		
+		for (int i : occurs_list[lit_for_occ*2-1])
 		{
 			bool someLitTrue = false;
 			int numUndefs = 0;
@@ -77,10 +94,15 @@ bool propagateGivesConflict ( ) {
 				if (val == TRUE) someLitTrue = true;
 				else if (val == UNDEF){ ++numUndefs; lastLitUndef = clauses[i][k]; }
 			}
-			if (not someLitTrue and numUndefs == 0) return true; // conflict! all lits false
+			if (not someLitTrue and numUndefs == 0)
+			{
+				update_conflict_counter();
+				for (uint k = 0; k < clauses[i].size(); ++k) nbConflicts[k]++;
+				return true; // conflict! all lits false
+			}
 			else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);	
 		}
-		for (int i : occurs_list[-modelStack[indexOfNextLitToPropagate]])
+		for (int i : occurs_list[lit_for_occ*2])
 		{
 			bool someLitTrue = false;
 			int numUndefs = 0;
@@ -90,7 +112,12 @@ bool propagateGivesConflict ( ) {
 				if (val == TRUE) someLitTrue = true;
 				else if (val == UNDEF){ ++numUndefs; lastLitUndef = clauses[i][k]; }
 			}
-			if (not someLitTrue and numUndefs == 0) return true; // conflict! all lits false
+			if (not someLitTrue and numUndefs == 0)
+			{
+				update_conflict_counter();
+				for (uint k = 0; k < clauses[i].size(); ++k) nbConflicts[k]++;
+				return true; // conflict! all lits false
+			}
 			else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);	
 		}
 	  
@@ -119,17 +146,28 @@ void backtrack(){
 
 // Heuristic for finding the next decision literal:
 int getNextDecisionLiteral(){
-	int max = 0;
+	/*int max = 0;
 	for (uint i = 1; i <= numVars; ++i)
 	{
 		if (model[i] == UNDEF)
 		{
 			if (max == 0) {
-				max = i;
-				if (occurs_list[i].size() < occurs_list[-i].size()) max = -i;
+				max = i*2-1;
+				if (occurs_list[i*2-1].size() < occurs_list[i*2].size()) max += 1;
 			}
-			else if (occurs_list[max].size() < occurs_list[-i].size()) max = -i;
-			else if (occurs_list[max].size() < occurs_list[i].size()) max = i;
+			else if (occurs_list[max].size() < occurs_list[i*2].size()) max = i*2;
+			else if (occurs_list[max].size() < occurs_list[i*2-1].size()) max = i*2-1;
+		}
+	}
+	if (max%2 == 0) return -max/2;
+	return (max+1)/2;*/
+	int max = 0;
+	for (uint i = 1; i <= numVars; ++i)
+	{
+		if (model[i] == UNDEF)
+		{
+			if (max == 0) max = i;
+			else if (nbConflicts[max] < nbConflicts[i]) max = i;
 		}
 	}
 	return max;
