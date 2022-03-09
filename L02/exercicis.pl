@@ -26,4 +26,22 @@ interseccion([X|L1], L2, I) :-
 	%false = subset(L2, [X]),
 	interseccion(L1, L2, I).
 	
-			
+
+%Exercici 4
+last_elem([X], X) :- !.
+last_elem([_|L], X) :- last_elem(L, X).
+
+reverse_list([], []).
+reverse_list([X|L1], S) :-
+    reverse_list(L1, R1),
+    append(R1,[X],S).
+
+reverse_using_last([],[]) :- !
+reverse_using_last([X], X) :- atomic(X), !.
+reverse_using_last(L, R) :-
+    last_elem(L, X),
+    append(L1, X, L),
+    reverse_using_last(L1, R1),
+    append([X], R1, R).
+
+%reverse_list([1,2,3,4,5], X).
