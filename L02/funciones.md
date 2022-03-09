@@ -3,6 +3,11 @@
 swipl -s programa.pl
 ```
 
+Un cop a dins de la interfici, per compilar fer:
+```{shell}
+?- [programa]
+```
+
 # Funcions que hi ha definides a prolog:
 
 ## Aritmètica
@@ -146,11 +151,11 @@ Código para generar dados acabado:
 
 ```{prolog}
 dados :-
-    permutation([1,2,3,4,5,6,7,8,9], [r1,r2,r3,v1,v2,v3,a1,a2,a3]),
-    gana([r1,r2,r3], [v1,v2,v3]),
-    gana([v1,v2,v3], [a1,a2,a3]),
-    gana([a1,a2,a3], [r1,r2,r3]),
-    write([r1,r2,r3,v1,v2,v3,a1,a2,a3]), nl, halt.
+    permutation([1,2,3,4,5,6,7,8,9], [R1,R2,R3,V1,V2,V3,A1,A2,A3]),
+    gana([R1,R2,R3], [V1,V2,V3]),
+    gana([V1,V2,V3], [A1,A2,A3]),
+    gana([A1,A2,A3], [R1,R2,R3]),
+    write([R1,R2,R3,V1,V2,V3,A1,A2,A3]), nl, halt.
     
 gana(D1, D2) :- 
     findall(X-Y, (member(X, D1), member(Y, D2), X>Y), L), 
