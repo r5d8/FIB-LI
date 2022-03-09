@@ -1,3 +1,8 @@
+# Programa
+```{shell}
+swipl -s programa.pl
+```
+
 # Funcions que hi ha definides a prolog:
 
 ## Aritmètica
@@ -96,4 +101,58 @@ append(L1, L2, [a, b]), write(L1-L2), nl, false.
 > []-[a,b]
 > [a]-[b]
 > [a,b]-[]
+```
+
+### Operadores
+
+- ! (operador de corte)
+- not (negación por fallo finito). Es finito porque si la llamada es infinita, elnot es infinito.
+    (negate by inite failure)
+    Implementación:
+    
+    not(X) :- X,!,fail.
+    not(_).
+- findall
+    Funcionamiento:
+    findall(X, (condicion), S).
+    
+    Condicion puede ser una linea prolog, S es un conjunto con la solucion.
+    
+    Ejemplo:
+    findall(X, (between(1, 7, X), 0 is X mod 2), S).
+    
+
+# Ejemplo juego: dados
+
+Tienes 3 dados: V, A, R. Cada uno tiene 2 veces los 3 numeros del 0 al 9, si repetirse entre dados.
+Juego: que el otro escoja un dado, y tirais unas cuantas veces, a ver quien gana.
+Truco: ganar circular. Se considera ganar el hecho que 5 de los 9 resultados posibles sea mayor en uno de los dados
+
+
+Pseudo-código para generar dados (algunas lineas no estan completas, para facilitar la lectura):
+```{prolog}
+dados :-
+    permutation([1,2,3,4,5,6,7,8,9], [r1,r2,r3,v1,v2,v3,a1,a2,a3]),
+    gana([r1,r2,r3], [v1,v2,v3]),
+    gana(V, A),
+    gana(A, R),
+    write([r1...a3]), nl, halt.
+    
+gana(D1, D2) :- 
+    findall(X-Y, (member(X, D1), member(Y, D2), X>Y), L), 
+    length(L, K), K>=5.
+```
+Código para generar dados acabado:
+
+```{prolog}
+dados :-
+    permutation([1,2,3,4,5,6,7,8,9], [r1,r2,r3,v1,v2,v3,a1,a2,a3]),
+    gana([r1,r2,r3], [v1,v2,v3]),
+    gana([v1,v2,v3], [a1,a2,a3]),
+    gana([a1,a2,a3], [r1,r2,r3]),
+    write([r1,r2,r3,v1,v2,v3,a1,a2,a3]), nl, halt.
+    
+gana(D1, D2) :- 
+    findall(X-Y, (member(X, D1), member(Y, D2), X>Y), L), 
+    length(L, K), K>=5.
 ```
