@@ -49,7 +49,7 @@ score(20, 1).
 worker(W):-          numWorkers(N), between(1,N,W).
 workerScore(W,S):-   worker(W), score(W,S).
 team(T):-            numTeams(N), between(1,N,T).
-incompatibleWorkers(W1,W2):- ...  %% Complete this!
+incompatibleWorkers(W1,W2):- workerScore(W1, S1), workerScore(W2, S2), S is S1+S2, maxScore(M), S > M.
 
 
 %%%%%%  1. SAT Variables:
@@ -60,9 +60,20 @@ satVariable( wt(W,T) ):- worker(W), team(T).
 %%%%%%  2. Clause generation:
 
 writeClauses:-  
-    .... %% Complete this!  
+    fillIncompatible,
+    %atLeastMinPerTeam,
+    %atMostMaxPerTeam,
     true,!.
 writeClauses:- told, nl, write('writeClauses failed!'), nl,nl, halt.
+
+fillIncompatible :- %findall(A-B, incompatibleWorkers(A, B), IncLits),
+                    %member(W1-W2, IncLits), 
+                    incompatibleWorkers(W1, W2),
+                    expressAnd(Var,[wt(W1, T), wt(W2, T)]),
+                    negate(Var, NVar),
+                    writeClause(NVar),
+                    fail.
+fillIncompatible.
 
 %%%%%%  3. DisplaySol: show the solution. Here M contains the literals that are true in the model:
 

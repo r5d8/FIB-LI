@@ -1,7 +1,8 @@
-file = miSudoku
+# file = miSudoku
+#file = miSudoku teams events newBusCompany
 
-$(file): $(file).pl
-	swipl -q -O -g main --stand_alone=true -o $(file) -c $(file).pl
+# $(file): $(file).pl
+# 	swipl -q -O -g main --stand_alone=true -o $(file) -c $(file).pl
 
 miSudoku: miSudoku.pl
 	swipl -q -O -g main --stand_alone=true -o miSudoku -c miSudoku.pl
