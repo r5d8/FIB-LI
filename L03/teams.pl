@@ -60,20 +60,27 @@ satVariable( wt(W,T) ):- worker(W), team(T).
 %%%%%%  2. Clause generation:
 
 writeClauses:-  
-    fillIncompatible,
-    %atLeastMinPerTeam,
-    %atMostMaxPerTeam,
+    %fillIncompatible,
+    atLeastMinPerTeam,
+    atMostMaxPerTeam,
+    exacltyOneTeamPerWorker,
     true,!.
 writeClauses:- told, nl, write('writeClauses failed!'), nl,nl, halt.
 
-fillIncompatible :- %findall(A-B, incompatibleWorkers(A, B), IncLits),
-                    %member(W1-W2, IncLits), 
-                    incompatibleWorkers(W1, W2),
-                    expressAnd(Var,[wt(W1, T), wt(W2, T)]),
-                    negate(Var, NVar),
-                    writeClause(NVar),
+fillIncompatible :- incompatibleWorkers(W1, W2),
+                    team(T),
+                    atMost(1, [wt(W1, T), wt(W2, T)]),
                     fail.
 fillIncompatible.
+
+atLeastMinPerTeam :- team(T), findall(wt(W,T), worker(W), List), minSize(M), atLeast(M, List), fail.
+atLeastMinPerTeam.
+
+atMostMaxPerTeam :- team(T), findall(wt(W,T), worker(W), List), maxSize(M), atMost(M, List), fail.
+atMostMaxPerTeam.
+
+exacltyOneTeamPerWorker :- worker(W), findall(wt(W,T), team(T), List), exactly(1, List), fail.
+exacltyOneTeamPerWorker.
 
 %%%%%%  3. DisplaySol: show the solution. Here M contains the literals that are true in the model:
 
