@@ -31,11 +31,11 @@ pescalar([X|L1],[Y|L2],P) :-
 	P is (X*Y)+P1.
 	
 %Exercici 3
-interseccion([], L2, []).
+interseccion([], _, []).    %Mid is L2
 interseccion([X|L1], L2, [X|I]) :-
 	subset(L2, [X]),
 	interseccion(L1, L2, I).
-interseccion([X|L1], L2, I) :-
+interseccion([_|L1], L2, I) :-
 	%false = subset(L2, [X]),
 	interseccion(L1, L2, I).
 	
@@ -65,5 +65,41 @@ fib(N,F):-
 %findall(X-F, (between(1,8,X), fib(X, F)), S).
 
 %Exercici 6
-%dados(P, N, L):-
-%    findall(, (between(1,6,X),))
+dados(P, 1, L) :-
+    between(1, 6, P),
+    L = [P].
+dados(P, N, [X|L]) :-
+    N>1,
+    N1 is N-1,
+    between(1,6,X),
+    P1 is P-X,
+    dados(P1, N1, L).
+    
+%Exercici 7
+suma_lista(X, []) :- X = 0, !.
+suma_lista(X, [T|L]):-
+    suma_lista(K, L),
+    X is T + K.
+
+suma_demas([]) :- false.
+suma_demas(L):-
+    append(L1, [X|L2], L),
+    append(L1, L2, AUX),
+    suma_lista(X, AUX), !.  %! al final, pq amb 1 ja va be
+
+%Exercici 8
+suma_antes([]) :- false.
+suma_antes(L) :-
+     append(L1, [X|_], L),
+     suma_lista(X, L1), !.
+
+%Exercici 9
+count_element(X, S, L) :-
+    findall(X, member(X, L), R),
+    length(R, S).
+
+%card([]):- write([]).
+card(L) :-
+    findall([X,S], count_element(X, S, L), R),
+    write(R).
+    
