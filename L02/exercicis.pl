@@ -115,12 +115,15 @@ esta_ordenada([X, A|L]):- X=<A, esta_ordenada([A|L]).
 %Exercici 11
 ord(L1, L2) :- permutation(L1, L2), esta_ordenada(L2).
 
+%----------------------------------------------------------
+%No va
 %Exercici 12
 diccionario(A,N) :-
     subset(A, S), 
     length(S, N), 
     permutation(S, P),
     write(P).%,nl,false.
+%----------------------------------------------------------
 
 %Exercici 14
 sendmoremoney() :-
