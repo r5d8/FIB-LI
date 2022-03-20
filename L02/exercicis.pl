@@ -93,7 +93,10 @@ suma_antes(L) :-
      append(L1, [X|_], L),
      suma_lista(X, L1), !.
 
+%----------------------------------------------------------
+%No va
 %Exercici 9
+
 count_element(X, S, L) :-
     findall(X, member(X, L), R),
     length(R, S).
@@ -102,4 +105,35 @@ count_element(X, S, L) :-
 card(L) :-
     findall([X,S], count_element(X, S, L), R),
     write(R).
+%----------------------------------------------------------
+
+%Exercici 10
+esta_ordenada([]) :- true, !.
+esta_ordenada([X]) :- atomic(X), true, !.
+esta_ordenada([X, A|L]):- X=<A, esta_ordenada([A|L]).
+
+%Exercici 11
+ord(L1, L2) :- permutation(L1, L2), esta_ordenada(L2).
+
+%Exercici 12
+diccionario(A,N) :-
+    subset(A, S), 
+    length(S, N), 
+    permutation(S, P),
+    write(P).%,nl,false.
+
+%Exercici 14
+sendmoremoney() :-
+    between(0, 9, S), between(0, 9, E), between(0, 9, N), between(0, 9, D),
+    between(0, 9, M), between(0, 9, O), between(0, 9, R), between(0, 9, Y), 
+    X is S*1000 + E*100 + N*10 + D,
+    Y is M*1000 + O*100 + R*10 + E,
+    Z is M*10000 + O*1000 + N*100 + E*10 + Y, 
+    Z is X+Y,
+    not(S==E), not(E==N), not(N==D), not(D==M), not(M==O), not(O==R), not(R==Y), not(Y==S),
+    write([S,E,N,D,M,O,R,Y]).
+
+    
+    
+    
     
