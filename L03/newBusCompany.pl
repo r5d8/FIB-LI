@@ -50,7 +50,6 @@ traject(zar,sev,1,800).
 
 day(D):-                    numDays(N),between(1,N,D).
 consecutiveDays(D1,D2):-    day(D1), day(D2), D2 is D1+1.
-city(C):-                   cities(L), member(C,L).
 bus(B):-                    numBuses(N), between(1,N,B).
 trip(C1-C2):-               traject(C1,C2,_,_).
 dist(C1-C2,Dist):-          traject(C1,C2,_,Dist).
