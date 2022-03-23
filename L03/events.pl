@@ -48,32 +48,33 @@ satVariable( md(M,D) ):-  moderator(M), day(D).
 %%%%%%  2. Clause generation:
 
 writeClauses:-  
-    exacltyOneModPerEvent,     %exaclty one moderator per event
-    exacltyOneDayPerEvent,     %exaclty one day per event
-    atMostMaxExD,              %at most maxEventsPerDay
+    exacltyOneModPerEvent,      %exaclty one moderator per event
+    exacltyOneDayPerEvent,      %exaclty one day per event
+    atMostMaxExD,               %at most maxEventsPerDay
     atMostMaxDxM,               %at most maxDaysPerModerator
+    relateVariables,            %to relate md with ed and em
     true,!.
 writeClauses:- told, nl, write('writeClauses failed!'), nl,nl, halt.
 
 exacltyOneModPerEvent :- event(E), findall(em(E, M), (moderator(M), eventModerators(E, Lmods), member(M, Lmods)), L), exactly(1, L), fail.
 exacltyOneModPerEvent.
 
-exacltyOneDayPerEvent:- event(E), findall(ed(E, D), (day(D), eventDays(E, Ldays), member(D, Ldays)), L), exactly(1, L), fail.
+exacltyOneDayPerEvent :- event(E), findall(ed(E, D), (day(D), eventDays(E, Ldays), member(D, Ldays)), L), exactly(1, L), fail.
 exacltyOneDayPerEvent.
 
 atMostMaxExD :- day(D), findall(ed(E, D), (event(E), eventDays(E, Ldays), member(D, Ldays)), L), maxEventsPerDay(MEPD), atMost(MEPD, L), fail.
 atMostMaxExD.
 
-%atMostMaxDxM :- moderator(M), findall( md(M, D),
-                                       %(day(D), findall(E, (event(E), eventDays(E, Ldays), member(D, Ldays)), Levents),
-                                        %findall(M2, (moderator(M2), member(E2, Levents), eventModerators(E2, L2mod), member(M2, L2mod) ), Lmods),
-                                        %member(M, Lmods) ),
-                                       %Lmembers), maxDaysPerModerator(MDPM), atMost(MDPM, Lmembers), fail.
 atMostMaxDxM :- moderator(M), findall(ed(E,D), (event(E), day(D), eventDays(E, Ldays), member(D, Ldays)), Led),
                               findall(em(E2,M), (event(E2), eventModerators(E2, Lmods), member(M, Lmods)), Lem),
                               findall(md(M, D2), (event(E3), member(em(E3, M), Lem), day(D2), member(ed(E3, D2), Led)), L),
                               maxDaysPerModerator(MDPM), atMost(MDPM, L), fail.
 atMostMaxDxM.
+
+%(ed ^ em) -> md == not(ed ^ em) v md == not(ed) v not(em) v md
+relateVariables :- event(E), day(D), moderator(M),
+                    writeClause([-ed(E, D), -em(E, M), md(M, D)]), fail.
+relateVariables.  
 
 %%%%%%  3. DisplaySol: show the solution. Here M contains the literals that are true in the model:
 
