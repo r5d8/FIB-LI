@@ -49,7 +49,7 @@ score(20, 1).
 worker(W):-          numWorkers(N), between(1,N,W).
 workerScore(W,S):-   worker(W), score(W,S).
 team(T):-            numTeams(N), between(1,N,T).
-incompatibleWorkers(W1,W2):- workerScore(W1, S1), workerScore(W2, S2), S is S1+S2, maxScore(M), S > M.
+incompatibleWorkers(W1,W2):- workerScore(W1, S1), workerScore(W2, S2), W1 \= W2, S is S1+S2, maxScore(M), S > M.
 
 
 %%%%%%  1. SAT Variables:
@@ -60,7 +60,7 @@ satVariable( wt(W,T) ):- worker(W), team(T).
 %%%%%%  2. Clause generation:
 
 writeClauses:-  
-    %fillIncompatible,
+    fillIncompatible,
     atLeastMinPerTeam,
     atMostMaxPerTeam,
     exacltyOneTeamPerWorker,
