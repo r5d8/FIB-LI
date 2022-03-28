@@ -45,6 +45,7 @@ void readClauses( ){
     int lit;
     while (cin >> lit and lit != 0) {
 		clauses[i].push_back(lit);
+//         cout << clauses[i][clauses[i].size()-1] << " ";
 		if (lit < 0) occurs_list[(-lit)*2-1].push_back(i);
 		else occurs_list[lit*2].push_back(i);
 	}
@@ -85,28 +86,30 @@ bool tracta_clausules_on_apareix(int lit)
 		bool someLitTrue = false;
 		int numUndefs = 0;
 		int lastLitUndef = 0;
+        
 		for (uint k = 0; not someLitTrue and k < clauses[i].size(); ++k){
+//             cerr << i << " " << k << " " << clauses[i].size() << " " << (uint)clauses[i][k] << endl;
 			int val = currentValueInModel(clauses[i][k]);
 			if (val == TRUE) someLitTrue = true;
 			else if (val == UNDEF){ ++numUndefs; lastLitUndef = clauses[i][k]; }
 		}
 		if (not someLitTrue and numUndefs == 0)
 		{
-			//cerr << "Ini " << decisionLevel;
+// 			cerr << "Ini " << decisionLevel;
 			update_conflict_counter();
 			for (uint k = 0; k < clauses[i].size(); ++k)
 			{
 				
 				int conflictiveVar = clauses[i][k];
-				//cerr << conflictiveVar << " ";
+// 				cerr << conflictiveVar << " ";
 				if (conflictiveVar < 0) conflictiveVar += -1;
 				nbConflicts[conflictiveVar]++;
 			}
-			//cerr << "Fin" << endl;
+// 			cerr << " Fin" << endl;
 			//peta després de fer el return. Segurament es per algo que retorno, o per com poso les dades. Mirar que passa
 			return true; // conflict! all lits false
 		}
-		else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);	
+		else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);
 	}
 	return false;
 }
