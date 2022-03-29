@@ -171,7 +171,76 @@ sendmoremoney() :-
     not(S==E), not(E==N), not(N==D), not(D==M), not(M==O), not(O==R), not(R==Y), not(Y==S),
     write([S,E,N,D,M,O,R,Y]).
 %----------------------------------------------------------
+
+%Exercici 16
+%f(_, _).
+
+reverse_domino(f(X, Y), f(Y, X)).
+
+%chain_domino(f(X, _), f(X, _)) :- !.
+%chain_domino(f(X, _), f(_, X)) :- !.
+chain_domino(f(_, X), f(X, _)) :- !.
+%chain_domino(f(_, X), f(_, X)) :- !.
+chain_domino(f(_, _), f(_, _)) :- fail.
+
+domino_order([], []).
+domino_order([X], [X]).
+domino_order([A, B|L], [A, B| O]) :-
+    chain_domino(A, B),
+    domino_order([B|L], [B|O]), !.
+
+%No s'ha de fer reverse del primer, pq sinó pot fallar
+%domino_order([A, B|L], [R, B| O]) :-
+    %reverse_domino(A, R),
+    %chain_domino(R, B),
+    %domino_order([B|L], [B|O]), !.
+
+domino_order([A, B|L], [A, R| O]) :-
+    reverse_domino(B, R),
+    chain_domino(A, R),
+    domino_order([R|L], [R|O]), !.
     
+dom(L) :- 
+    permutation(L, P),
+    domino_order(P, O),
+    write(O).
+
+dom(L) :- 
+    permutation(L, [X|P]),
+    reverse_domino(X,R),
+    domino_order([R|P], O),
+    write(O).
     
+dom(_) :- write("no hay cadena"), nl.
     
+%----------------------------------------------------------
+%No va
+%Exercici 17
+cancer() :-
+    between(0, 10, S1), between(0, 10, N1), S1 > N1,
+    T1 is N1 + S1, T1 =< 10,
+    between(0, 10, S2), between(0, 10, N2), S2 > N2,
+    T2 is N2 + S2, T2 =< 10,
+    N is N1+N2, S is S1+S2, N > S,
+    write("YES, it's true!"), nl,
+    write("Group 1: Smokers = "), write(S1), write("; Non smokers = "), write(N1), nl,
+    write("Group 2: Smokers = "), write(S2), write("; Non smokers = "), write(N2), nl, !.
+%----------------------------------------------------------
+
+%Exercici 20 
+%problema amb []
+flatten([], []) :- !.
+flatten([X], [X]) :- atomic(X), !.
+flatten([X], F) :- flatten(X, F).
+
+flatten([[]|L], F) :- flatten(L, F).
+
+flatten([X|L], F) :-
+    atomic(X),!,
+    flatten(L, F1),
+    append([X], F1, F).
+flatten([X|L], F) :-
+    flatten(X, F0),
+    flatten(L, F1),
+    append(F0, F1, F).
     
