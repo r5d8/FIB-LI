@@ -40,9 +40,17 @@ interseccion([X|L1], L2, [X|I]) :-
 interseccion([_|L1], L2, I) :-
 	interseccion(L1, L2, I).
 
+union([], L2, L2).
+union([X|L1], L2, U) :-
+    member(X, L2), !,
+    union(L1, L2, U).
+union([X|L1], L2, [X|U]) :-
+    union(L1, L2, U).
+	
 %Exercici 4
-last_elem([X], X) :- !.
-last_elem([_|L], X) :- last_elem(L, X).
+%last_elem([X], X) :- !.
+%last_elem([_|L], X) :- last_elem(L, X).
+last_elem(L, X) :- append(_, [X], L).
 
 reverse_list([], []).
 reverse_list([X|L1], S) :-
@@ -93,19 +101,28 @@ suma_antes(L) :-
      append(L1, [X|_], L),
      suma_lista(X, L1), !.
 
-%----------------------------------------------------------
-%No va
 %Exercici 9
 
 count_element(X, S, L) :-
     findall(X, member(X, L), R),
     length(R, S).
 
+%Fa el mateix que la intersecció, però amb 2 elements
+suprimir_rep([], []).
+
+suprimir_rep([X|L], R) :-
+    member(X, L), !,
+    suprimir_rep(L, R).
+
+suprimir_rep([X|L], [X|R]) :-
+    suprimir_rep(L, R).
+    
 %card([]):- write([]).
 card(L) :-
-    findall([X,S], count_element(X, S, L), R),
-    write(R).
-%----------------------------------------------------------
+    findall([X,S], (member(X, L), count_element(X, S, L)), R),
+    suprimir_rep(R, NewR),
+    write(NewR).
+%Si es vol escriure com a l'enunciat, canviar el suprimir
 
 %Exercici 10
 esta_ordenada([]) :- true, !.
