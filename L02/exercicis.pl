@@ -31,14 +31,14 @@ pescalar([X|L1],[Y|L2],P) :-
 	P is (X*Y)+P1.
 	
 %Exercici 3
-interseccion([], _, []).    %Mid is L2
+interseccion([], _, []).
+
 interseccion([X|L1], L2, [X|I]) :-
-	subset(L2, [X]),
-	interseccion(L1, L2, I).
-interseccion([_|L1], L2, I) :-
-	%false = subset(L2, [X]),
+	member(X, L2),!,
 	interseccion(L1, L2, I).
 	
+interseccion([_|L1], L2, I) :-
+	interseccion(L1, L2, I).
 
 %Exercici 4
 last_elem([X], X) :- !.
