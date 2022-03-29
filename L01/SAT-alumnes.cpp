@@ -18,7 +18,7 @@ uint indexOfNextLitToPropagate;
 uint decisionLevel;
 vector<int> nbConflicts;
 int conflict_counter = 0;
-vector<vector<int>> occurs_list;
+vector<vector<int>> occurs_list; //Si no va, provar de fer-ne 2: un per + i un per -s
 /* Estructura de occurs_list:
  * Cada posició del vector representa un literal en positiu o negatiu
  * i conté les clàusules en que apareix.
@@ -38,7 +38,7 @@ void readClauses( ){
   cin >> aux >> numVars >> numClauses;
   clauses.resize(numClauses);
   nbConflicts = vector<int>(numVars + 1, 0);
-  occurs_list = vector<vector<int>>(numVars * 2 + 1, vector<int>(0));
+  occurs_list = vector<vector<int>>(numVars * 2 + 1, vector<int>(0));   
    
   // Read clauses
   for (uint i = 0; i < numClauses; ++i) {
