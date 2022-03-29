@@ -133,15 +133,33 @@ esta_ordenada([X, A|L]):- X=<A, esta_ordenada([A|L]).
 ord(L1, L2) :- permutation(L1, L2), esta_ordenada(L2).
 
 %----------------------------------------------------------
-%No va
+%No va del tot. Conté repetits.
 %Exercici 12
+%diccionario(A,N) :-
+    %subset(A, S), 
+    %%length(S, N), 
+    %permutation(S, P),
+    %write(P).%,nl,false.
+
+chooseNelem(_, N, _) :- N < 0, !, fail.
+chooseNelem(A, N, _) :- length(A, X), X < N, !, fail.
+chooseNelem(A, N, A) :- length(A, N).
+chooseNelem([X|A], N, [X|C]):-
+    N1 is N-1,
+    chooseNelem(A, N1, C).
+chooseNelem([_|A], N, C):-
+    chooseNelem(A, N, C).
+    
 diccionario(A,N) :-
-    subset(A, S), 
-    length(S, N), 
-    permutation(S, P),
-    write(P).%,nl,false.
+    chooseNelem(A, N, C),
+    permutation(C, P),
+    write(P), nl, fail.
+
+    
 %----------------------------------------------------------
 
+%----------------------------------------------------------
+%No va
 %Exercici 14
 sendmoremoney() :-
     between(0, 9, S), between(0, 9, E), between(0, 9, N), between(0, 9, D),
@@ -152,7 +170,7 @@ sendmoremoney() :-
     Z is X+Y,
     not(S==E), not(E==N), not(N==D), not(D==M), not(M==O), not(O==R), not(R==Y), not(Y==S),
     write([S,E,N,D,M,O,R,Y]).
-
+%----------------------------------------------------------
     
     
     
