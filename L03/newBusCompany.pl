@@ -65,29 +65,33 @@ satVariable( bdcc(B,D,C1,C2) ):- bus(B), day(D), trip(C1-C2).  % bus B on day D 
 
 writeClauses:-  
     exactlyOneTripPerBusAndDay,
-    %distanceRestriction,
-    %minimumDaysPerWeek,
+    distanceRestriction,
+    minimumDaysPerWeek,
     atMost1TrajectPerDay,
+    consecutiveTrips,
     true,!.
 writeClauses:- told, nl, write('writeClauses failed!'), nl,nl, halt.
 
 exactlyOneTripPerBusAndDay:- bus(B),  day(D), findall(bdcc(B,D,C1,C2), trip(C1-C2), L), exactly(1, L), fail.
 exactlyOneTripPerBusAndDay.
 
-individualDistanceRestriction([[X, Y]]) :- atMost(0,[X, Y]), !.
-individualDistanceRestriction([X|L]) :- atMost(0,X), individualDistanceRestriction(L).
-distanceRestriction :- bus(B), day(D1), day(D2), consecutiveDays(D1,D2),
-                        findall([bdcc(B,D1,C1,C2), bdcc(B,D2,C2,C3)], (trip(C1-C2), trip(C2-C3), tooLongDist(C1-C2-C3)), L), 
-                        individualDistanceRestriction(L), fail.
+distanceRestriction	:- bus(B), consecutiveDays(D1, D2), trip(C1-C2), trip(C2-C3),
+						tooLongDist(C1-C2-C3), atMost(1, [bdcc(B,D1,C1,C2), bdcc(B,D2,C2,C3)]), fail.
 distanceRestriction.
 
-minimumDaysPerWeek:- day(D1), Dmin is D1 mod 7, Dmin = 1, DMax is D1 + 7, trip(C1-C2),
-                     findall(bdcc(B,D,C1,C2), (bus(B), day(D), between(D1, DMax, D)), L), frequency(C1-C2,F),
-                     atLeast(F, L), fail.
+%minimumDaysPerWeek:- day(D1), Dmin is D1 mod 7, Dmin = 1, DMax is D1 + 7, trip(C1-C2),
+minimumDaysPerWeek:- trip(C1-C2), findall(bdcc(B,D,C1,C2), (bus(B), day(D)), L),
+					 frequency(C1-C2,F), atLeast(F, L), fail.
 minimumDaysPerWeek.
 
 atMost1TrajectPerDay :- day(D), trip(C1-C2), findall(bdcc(B,D,C1,C2), bus(B), L), atMost(1, L), fail.
 atMost1TrajectPerDay.
+
+%(bdcc(B,D1,C1,C2) => bdcc(B,D2,C2,C3) v bdcc(B,D2,C2,C4) v...)
+consecutiveTrips :- bus(B), consecutiveDays(D1, D2), trip(C1-C2), 
+					findall(bdcc(B,D2,C2,C3), trip(C2-C3), L), append([-bdcc(B,D1,C1,C2)], L, Limplica),
+					writeClause(Limplica), fail.
+consecutiveTrips.
 
 %%%%%%  3. DisplaySol: show the solution. Here M contains the literals that are true in the model:
 
