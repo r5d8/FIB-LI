@@ -124,7 +124,8 @@ suprimir_rep([X|L], [X|R]) :-
 %card([]):- write([]).
 card(L) :-
     findall([X,S], (member(X, L), count_element(X, S, L)), R),
-    suprimir_rep(R, NewR),
+    %suprimir_rep(R, NewR),
+    sort(R, NewR),
     write(NewR).
 %Si es vol escriure com a l'enunciat, canviar el suprimir
 
@@ -181,10 +182,7 @@ sendmoremoney() :-
 
 reverse_domino(f(X, Y), f(Y, X)).
 
-%chain_domino(f(X, _), f(X, _)) :- !.
-%chain_domino(f(X, _), f(_, X)) :- !.
 chain_domino(f(_, X), f(X, _)) :- !.
-%chain_domino(f(_, X), f(_, X)) :- !.
 chain_domino(f(_, _), f(_, _)) :- fail.
 
 domino_order([], []).
@@ -219,7 +217,7 @@ dom(_) :- write("no hay cadena"), nl.
     
 %----------------------------------------------------------
 %No va
-%Exercici 17
+%Exercici 18
 cancer() :-
     between(0, 10, S1), between(0, 10, N1), S1 > N1,
     T1 is N1 + S1, T1 =< 10,
@@ -233,7 +231,7 @@ cancer() :-
 
 %Exercici 20 
 %problema amb []
-flatten([], []) :- !.
+flatten([], []).
 flatten([X], [X]) :- atomic(X), !.
 flatten([X], F) :- flatten(X, F).
 
