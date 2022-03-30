@@ -40,13 +40,16 @@ interseccion([X|L1], L2, [X|I]) :-
 interseccion([_|L1], L2, I) :-
 	interseccion(L1, L2, I).
 
-union([], L2, L2).
-union([X|L1], L2, U) :-
-    member(X, L2), !,
-    union(L1, L2, U).
-union([X|L1], L2, [X|U]) :-
-    union(L1, L2, U).
-	
+%union([], L2, L2).
+%union([X|L1], L2, U) :-
+    %member(X, L2), !,
+    %union(L1, L2, U).
+%union([X|L1], L2, [X|U]) :-
+    %union(L1, L2, U).
+    
+%union usant sort per a eliminar repetits
+union(L1, L2, U) :- append(L1, L2, Ut), sort(Ut, U).
+    
 %Exercici 4
 %last_elem([X], X) :- !.
 %last_elem([_|L], X) :- last_elem(L, X).

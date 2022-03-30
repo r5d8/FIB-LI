@@ -97,6 +97,10 @@ mypermutation([X|L], P) :- mypermutation(L, P1),
 select(?Elem, ?List1, ?List2)
 Is true when List1, with Elem removed, results in List2. This implementation is determinsitic if the last element of List1 has been selected.
 
+## sort
+sort(L1, L)
+Sirve para borrar repetidos.
+
 ## Sentencies per a escriure totes les solucions
 - write(X) escriu X. Si es vol posar més d'un paràmetre, posar un '-' entre mig
 - nl fa un "new line"

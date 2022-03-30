@@ -68,11 +68,11 @@ atMostMaxExD.
 atMostMaxDxM :- moderator(M), findall(ed(E,D), (event(E), day(D), eventDays(E, Ldays), member(D, Ldays)), Led),
                               findall(em(E2,M), (event(E2), eventModerators(E2, Lmods), member(M, Lmods)), Lem),
                               findall(md(M, D2), (event(E3), member(em(E3, M), Lem), day(D2), member(ed(E3, D2), Led)), L),
-                              maxDaysPerModerator(MDPM), atMost(MDPM, L), fail.
+                              maxDaysPerModerator(MDPM), sort(L, LS), atMost(MDPM, LS), fail.
 atMostMaxDxM.
 
 %(ed ^ em) -> md == not(ed ^ em) v md == not(ed) v not(em) v md
-relateVariables :- event(E), day(D), moderator(M),
+relateVariables :- event(E), day(D), moderator(M), %eventModerators(E, CM), member(M, CM), eventDays(E, CD), member(D, CD),
                     writeClause([-ed(E, D), -em(E, M), md(M, D)]), fail.
 relateVariables.  
 
