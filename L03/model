@@ -5,50 +5,51 @@ c
 c using 2 as default phase
 c
 c parsing infile.cnf
-c parsed header 'p cnf 136 1030'
-c initialized 136 variables
-c found 1030 non trivial clauses
+c parsed header 'p cnf 175 219'
+c initialized 175 variables
+c found 219 non trivial clauses
 c
 c random number generator seed 0
 c 
 c  seconds     variables   original    learned     agility
 c         level        used      conflicts    limit          MB
 c 
-c s   0.0   0.0   134  25.7   957     0   196     0   0.0   0.1 
+c s   0.0   0.0   175   0.0   219     0     0     0   0.0   0.0 
 c 
 c initial reduction limit 1000 clauses
 c 
-c 1   0.0  21.4   134  27.2   957     2   198  1000   0.1   0.1 
+c 1   0.0  88.0   175   0.0   219     0     0  1000   0.0   0.0 
 c 
 c  seconds     variables   original    learned     agility
 c         level        used      conflicts    limit          MB
 c 
 s SATISFIABLE
-v -1 2 -3 4 -5 -6 7 -8 -9 10 -11 -12 13 -14 15 -16 17 -18 -19 20 -21 22 -23 24
-v -25 26 -27 -28 29 -30 31 -32 -33 34 -35 36 37 -38 -39 40 41 -42 43 -44 -45 46
-v -47 -48 -49 50 -51 -52 53 54 -55 56 -57 -58 -59 60 -61 62 -63 -64 -65 66 67
-v -68 -69 -70 71 72 -73 74 75 -76 -77 78 -79 -80 81 82 -83 -84 85 -86 87 88 -89
-v -90 -91 -92 -93 -94 -95 -96 -97 -98 -99 -100 -101 -102 -103 -104 -105 -106
-v -107 -108 -109 -110 -111 -112 -113 -114 -115 -116 -117 -118 -119 -120 -121
-v -122 -123 -124 -125 -126 -127 -128 -129 -130 -131 -132 -133 -134 -135 -136 0
+v 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29
+v 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55
+v 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81
+v 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105
+v 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124
+v 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143
+v 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162
+v 163 164 165 166 167 168 169 170 171 172 173 174 175 0
 c
 c 0 iterations
 c 0 restarts
 c 0 failed literals
-c 2 conflicts
-c 49 decisions
-c 2 fixed variables
-c 812 learned literals
+c 0 conflicts
+c 175 decisions
+c 0 fixed variables
+c 0 learned literals
 c 0.0% deleted literals
-c 418 propagations
-c 3396 visits
-c 27.2% variables used
+c 175 propagations
+c 0 visits
+c 0.0% variables used
 c 0.0 seconds in library
 c 1.0 megaprops/second
-c 8.1 megavisits/second
-c probing 0.0 seconds 17%
+c 0.0 megavisits/second
+c probing 0.0 seconds 30%
 c 1 simplifications
 c 0 reductions
 c 0.0 MB recycled
-c 0.1 MB maximally allocated
+c 0.0 MB maximally allocated
 c 0.0 seconds total run time

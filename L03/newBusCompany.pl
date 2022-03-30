@@ -1,4 +1,4 @@
-symbolicOutput(0).  % set to 1 to see symbolic output only; 0 otherwise.
+symbolicOutput(1).  % set to 1 to see symbolic output only; 0 otherwise.
 
 %% A bus company operates services between a set of different cities.
 %% We want to design the routes of the buses for a given week.
@@ -54,27 +54,36 @@ bus(B):-                    numBuses(N), between(1,N,B).
 trip(C1-C2):-               traject(C1,C2,_,_).
 dist(C1-C2,Dist):-          traject(C1,C2,_,Dist).
 frequency(C1-C2,F):-        traject(C1,C2,F,_).
-tooLongDist(C1-C2-C3):-     trip(C1-C2), trip(C2-C3), C1 \= C3, dist(C1-C2,D1), dist(C2-C3,D2), maxDist(Max), D1+D2 > Max.
+tooLongDist(C1-C2-C3):-     trip(C1-C2), trip(C2-C3), dist(C1-C2,D1), dist(C2-C3,D2), maxDistance(Max), D1+D2 > Max.
 
 
 %%%%%%  1. SAT Variables:
 
 satVariable( bdcc(B,D,C1,C2) ):- bus(B), day(D), trip(C1-C2).  % bus B on day D does C1-C2
-% ... more variables may be needed
 
 %%%%%%  2. Clause generation:
 
 writeClauses:-  
-    exactlyOneTripPerBusAndDay,
-    ...
+    %exactlyOneTripPerBusAndDay,
+    %distanceRestriction,
+    minimumDaysPerWeek,
     true,!.
 writeClauses:- told, nl, write('writeClauses failed!'), nl,nl, halt.
 
-exactlyOneTripPerBusAndDay:- ...
+exactlyOneTripPerBusAndDay:- bus(B),  day(D), findall(bdcc(B,D,C1,C2), trip(C1-C2), L), exactly(1, L), fail.
 exactlyOneTripPerBusAndDay.
 
-...
+individualDistanceRestriction([[X, Y]]) :- exactly(0,[X, Y]), !.
+individualDistanceRestriction([X|L]) :- exactly(0,X), individualDistanceRestriction(L).
+distanceRestriction :- bus(B), day(D1), day(D2), consecutiveDays(D1,D2),
+                        findall([bdcc(B,D1,C1,C2), bdcc(B,D2,C2,C3)], (trip(C1-C2), trip(C2-C3), tooLongDist(C1-C2-C3)), L), 
+                        individualDistanceRestriction(L), fail.
+distanceRestriction.
 
+minimumDaysPerWeek:- day(D1), Dmin is D1 mod 7, Dmin = 1, DMax is Dmin + 7, trip(C1-C2),
+                     findall(bdcc(B,D,C1,C2), (bus(B), day(D), between(Dmin, DMax, D)), L), frequency(C1-C2,F),
+                     atLeast(F, L), fail.
+minimumDaysPerWeek.
 
 %%%%%%  3. DisplaySol: show the solution. Here M contains the literals that are true in the model:
 

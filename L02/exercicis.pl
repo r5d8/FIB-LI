@@ -37,7 +37,8 @@ interseccion([X|L1], L2, [X|I]) :-
 	member(X, L2),!,
 	interseccion(L1, L2, I).
 	
-interseccion([_|L1], L2, I) :-
+interseccion([X|L1], L2, I) :-
+    not(member(X, L2)),
 	interseccion(L1, L2, I).
 
 %union([], L2, L2).
