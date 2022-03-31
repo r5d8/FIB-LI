@@ -222,16 +222,18 @@ cancer() :-
     %No es de 0 a 10 per deixar que existeixi minim una persona a cada grup
     between(1, 9, S1), N1 is 10 - S1, between(0, S1, CS1), between(0, N1, CN1), 
     PCN1 is CN1/N1, PCS1 is CS1/S1, PCN1 < PCS1,
-    between(1, 10, S2), N2 is 10 - S2, between(0, S2, CS2), between(0, N2, CN2),
+    between(1, 9, S2), N2 is 10 - S2, between(0, S2, CS2), between(0, N2, CN2),
     PCN2 is CN2/N2, PCS2 is CS2/S2, PCN2 < PCS2,
-    %N is PCN1+PCN2, S is S1+S2, N > S,
+    N is N1+N2, S is S1+S2, CN is CN1 + CN2, CS is CS1 + CS2, PN is CN/N, PS is CS/S, PN>PS,
     write("YES, it's true!"), nl,
     write("Group 1: Smokers = "), write(S1), write("; Non smokers = "), write(N1), nl,
     write("Group 1 cancer: Smokers = "), write(CS1), write("; Non smokers = "), write(CN1), nl,
     write("Group 1 proportion: Smokers = "), write(PCS1), write("; Non smokers = "), write(PCN1), nl,
     write("Group 2: Smokers = "), write(S2), write("; Non smokers = "), write(N2), nl,
     write("Group 2 cancer: Smokers = "), write(CS2), write("; Non smokers = "), write(CN2), nl,
-    write("Group 2 proportion: Smokers = "), write(PCS2), write("; Non smokers = "), write(PCN2), nl,!.
+    write("Group 2 proportion: Smokers = "), write(PCS2), write("; Non smokers = "), write(PCN2), nl,
+    nl, nl,
+    write("Final proportions: Smokers = "), write(PS), write("; Non smokers = "), write(PN), nl,!.
 %----------------------------------------------------------
 
 %Exercici 20 
