@@ -81,7 +81,7 @@ writeClauses(MaxConsecutiveHours):-
     true,!.
 writeClauses(_):- told, nl, write('writeClauses failed!'), nl,nl, halt.
 
-%maxk(K) :- gangster(G), hour(Ini), Ini < 72-K, findall(-works(G, H), between(Ini, Fin, H), Lits), writeClause(Lits), fail.
+%maxk(K) :- gangster(G), hour(Ini), Fin is Ini + K, hour(Fin), findall(-works(G, H), between(Ini, Fin, H), Lits), writeClause(Lits), fail.
 %maxK(_).
 %works seria un expressOr de does. If it does a task (any of the 3), it's true.
 
