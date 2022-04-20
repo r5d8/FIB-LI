@@ -16,6 +16,8 @@
 %%%  Example input:
 
 significantVillages([e,q,r]). % list of villages where a tower is mandatory
+%significantVillages([]). % alternative list, which should give a solution with just 2 towers
+
 map_size(34,40).              % numrows, numcols; the left upper corner of the map has coordinates (1,1)
 
 village(a, 2,20,2).           % village(ident,row,col,size):  row,col of left upper corner, and size of the square
@@ -109,6 +111,7 @@ numVillages(N):- findall(V,village(V),L), length(L,N).                % N is the
 % 1.- Declare SAT variables to be used
 
 satVariable( towerPos(I,J) ):- row(I), col(J).  % means "there is a tower at position I-J"
+satVariable( towerVillage(V) ):- village(V).  % means "there is a tower at village V"
    % YOU MAY WANT TO INTRODUCE SOME OTHER VARIABLE FOR MAKING THE CARDINALITY CONSTRAINTS SMALLER
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,10 +120,39 @@ satVariable( towerPos(I,J) ):- row(I), col(J).  % means "there is a tower at pos
 
 writeClauses(infinite):- !, numVillages(N), writeClauses(N),!.
 writeClauses(MaxNumTowers):-
-    ...
+    atMostMaxTowers(MaxNumTowers),
+    atMostOneTowerPerVillage,
+    connectVars,
+    placeSignificant,
+    allVillagesWatched,
+    noTowerOutOfVillages,
     true,!.                    % this way you can comment out ANY previous line of writeClauses
 writeClauses(_):- told, nl, write('writeClauses failed!'), nl,nl, halt.
 
+atMostMaxTowers(MaxNumTowers):- findall(towerVillage(V), village(V), S), atMost(MaxNumTowers, S), fail.
+atMostMaxTowers(_).
+
+atMostOneTowerPerVillage:- village(V), findall(towerPos(I, J), posVillage(V, I, J), L), atMost(1, L), fail.
+atMostOneTowerPerVillage.
+
+connectVars:- posVillage(V, I, J), writeClause([-towerPos(I, J), towerVillage(V)]), fail.
+connectVars.
+
+placeSignificant :- significantVillage(V), findall(towerPos(I, J), posVillage(V, I, J), L), atLeast(1, L), fail.%potser fer un ALO?
+placeSignificant.
+
+allVillagesWatched :- village(V), findall(row(I), rowVillage(V, I), Lr), findall(col(J), colVillage(V, J), Lc),
+                        findall(towerPos(I, J), (member(row(I), Lr), col(J)), Ltr),
+                        findall(towerPos(I, J), (member(col(J), Lc), row(I)), Ltc),
+                        append(Ltr, Ltc, L), atLeast(1, L), fail.
+allVillagesWatched.
+
+noTowerOutOfVillages:- findall(towerPos(I, J), 
+                                %(village(V), position(I, J), not(posVillage(V, I, J))), 
+                                (position(I, J), findall(village(V), posVillage(V, I, J), T), length(T, 0)),
+                                L), 
+                        sort(L, Ls), atMost(0, Ls), fail.
+noTowerOutOfVillages.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3. This predicate displays a given solution M:
@@ -138,7 +170,8 @@ write2(N):- write(N),!.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 4. This predicate computes the cost of a given solution M:
 
-costOfThisSolution(M,Cost):- ...
+%costOfThisSolution(M,Cost):- findall(V, member(towerVillage(V), M), L), sort(L, Ls), length(Ls, Cost).
+costOfThisSolution(M,Cost):- findall(I-J, member(towerPos(I, J), M), L), sort(L, Ls), length(Ls, Cost), !.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,6 +200,7 @@ treatResult(10,_):- %   shell('cat model',_),
     costOfThisSolution(M,Cost),
     write('with cost '), write(Cost), nl,nl,
     displaySol(M), 
+    %write(M),
     Cost1 is Cost-1,   nl,nl,nl,nl,nl,  write('Now looking for solution with cost '), write(Cost1), write('...'), nl,
     initClauseGeneration, tell(clauses), writeClauses(Cost1), told,
     tell(header),  writeHeader,  told,
