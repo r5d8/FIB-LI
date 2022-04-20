@@ -76,9 +76,14 @@ satVariable( does(G,T,H) ):- ...  %  means:  "gangster G does task T at hour H" 
 
 writeClauses(infinite):- !, writeClauses(72),!.
 writeClauses(MaxConsecutiveHours):-
-    ...
+    %hacer por ventanas, la comprovacion de MaxConsecutiveHours. Coger k+1 y mirar que descansa ALO
+    %maxk(MaxConsecutiveHours),
     true,!.
 writeClauses(_):- told, nl, write('writeClauses failed!'), nl,nl, halt.
+
+%maxk(K) :- gangster(G), hour(Ini), Ini < 72-K, findall(-works(G, H), between(Ini, Fin, H), Lits), writeClause(Lits), fail.
+%maxK(_).
+%works seria un expressOr de does. If it does a task (any of the 3), it's true.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3. This predicate displays a given solution M:
