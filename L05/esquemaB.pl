@@ -1,7 +1,7 @@
 main:- EstadoInicial = ..., EstadoFinal = ...,
         between(1,1000,CosteMax), % Buscamos soluci ́on de coste 0; si no, de 1, etc.
         camino( CosteMax, EstadoInicial, EstadoFinal, [EstadoInicial], Camino ),
-        reverse(Camino,Camino1), write(Camino1), write(’ con coste ’), write(CosteMax), nl, halt.
+        reverse(Camino,Camino1), write(Camino1), write(' con coste '), write(CosteMax), nl, halt.
 
 camino( 0, E,E, C,C ). % Caso base: cuando el estado actual es el estado final.
 camino( CosteMax, EstadoActual, EstadoFinal, CaminoHastaAhora, CaminoTotal ):-
