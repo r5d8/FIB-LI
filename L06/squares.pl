@@ -36,7 +36,7 @@ ejemplo(6,175,[81,64,56,55,51,43,39,38,35,33,31,30,29,20,18,16,14,9,8,5,4,3,2,1]
 
 
 main:- 
-    ejemplo(4,Big,Sides),
+    ejemplo(3,Big,Sides),
     nl, write('Fitting all squares of size '), write(Sides), write(' into big square of size '), write(Big), nl,nl,
     length(Sides,N), 
     % VARIABLES
