@@ -1,4 +1,4 @@
-symbolicOutput(0).  % set to 1 to see symbolic output only; 0 otherwise.
+symbolicOutput(1).  % set to 1 to see symbolic output only; 0 otherwise.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % To use this prolog template for other optimization problems, replace the code parts 1,2,3,4 below. %
@@ -78,11 +78,9 @@ writeClauses(infinite):- !, writeClauses(72),!.
 writeClauses(MaxConsecutiveHours):-
     %hacer por ventanas, la comprovacion de MaxConsecutiveHours. Coger k+1 y mirar que descansa ALO
     maxk(MaxConsecutiveHours),
-    joinDoesWorks(),
-    nGangstersPerTaskPerHour(),
-    oneTaskPerGperH(),
-    noConsecHours(),
-    gangsterNotAvailable(),
+    %joinDoesWorks(),
+    %nGangstersPerTaskPerHour(),
+    %oneTaskPerGperH(),
     true,!.
 writeClauses(_):- told, nl, write('writeClauses failed!'), nl,nl, halt.
 
@@ -91,19 +89,13 @@ joinDoesWorks().
 
 %maxk(K) :- gangster(G), hour(Ini), Fin is Ini + K - 1, hour(Fin), findall(-works(G, H), between(Ini, Fin, H), Lits), writeClause(Lits), fail.
 maxk(MaxConsecutiveHours) :- gangster(G), hour(Ini), hour(Fin), Fin is Ini + MaxConsecutiveHours, findall(-works(G,H), between(Ini, Fin, H), Lits), writeClause(Lits), fail.
-maxk(_).
+maxK(_).
 
 nGangstersPerTaskPerHour() :- task(T), hour(H), findall(does(G, T, H), gangster(G), L), needed(T, H, N), exactly(N, L), fail.
 nGangstersPerTaskPerHour().
 
 oneTaskPerGperH() :- gangster(G), hour(H), findall(does(G, T, H), task(T), L), atMost(1, L), fail.
 oneTaskPerGperH().
-
-noConsecHours() :- gangster(G), hour(H), H1 is H+1, hour(H1), task(T1), task(T2), T1 \= T2, writeClause([-does(G, T1, H), -does(G, T2, H1)]), fail.
-noConsecHours().
-
-gangsterNotAvailable() :- gangster(G), hour(H), blocked(G, H), writeClause(-works(G, H)), fail.
-gangsterNotAvailable.
 
 %works seria un expressOr de does. If it does a task (any of the 3), it's true.
 
@@ -125,7 +117,7 @@ writeIfBusy(_,_,_):- write('-'),!.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 4. This predicate computes the cost of a given solution M:
 
-hores_consec(G, H, M, H_consec) :- gangster(G), hour(H), member(works(G, H), M), H1 is H+1, hour(H1), hores_consec(G, H1, M, Hcons2), H_consec is Hcons2+1, !.
+hores_consec(G, H, M, H_consec) :- gangster(G), hour(H), H1 is H+1, hour(H1), hores_consec(G, H1, M, Hcons2), H_consec is Hcons2+1, !.
 hores_consec(_, _, _, 0).
 
 
