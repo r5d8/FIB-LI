@@ -117,31 +117,34 @@ writeClauses(_):- told, nl, write('writeClauses failed!'), nl,nl, halt.
 eachCourseExactlyOneProf:- courseProfessors(C,LP), findall( cp(C,P), member(P,LP), Lits ), exactly(1,Lits), fail.
 eachCourseExactlyOneProf.
 
-eachCourseExactlyOneRoom:- ...
+eachCourseExactlyOneRoom:- courseRooms(C, LR), findall(cr(C, R), member(R, LR), L), exactly(1, L), fail.
 eachCourseExactlyOneRoom.
 
-eachCourseMaxOncePerDay:-  ...
+eachCourseMaxOncePerDay:-  course(C), day(D), findall(cdh(C, D, H), hour(H), L), atMost(1, L), fail.
 eachCourseMaxOncePerDay.
 
-relateVarsCDHwithCD:-      ...    expressOr(cd(C,D),Lits), fail.
+relateVarsCDHwithCD:-  course(C), day(D), findall(cdh(C, D, H), hour(H), Lits), expressOr(cd(C,D),Lits), fail.
 relateVarsCDHwithCD.
 
-eachCourseRightNumberOfDays:- ...
+eachCourseRightNumberOfDays:- courseHours(C, Hs), findall(cd(C, D), day(D), L), exactly(Hs, L), fail.
 eachCourseRightNumberOfDays.
 
-noOverlapCoursesSameYear:- ...
+noOverlapCoursesSameYear:- courseYear(C1, Y), courseYear(C2, Y), C1 < C2, day(D),   %Es pot usar < en comptes de \=. Continua sent el mateix, però és més eficient: no hi ha repes
+    hour(H), writeClause([ -cdh(C1,D,H), -cdh(C2,D,H)]), fail.
 noOverlapCoursesSameYear.
 
-noOverlapProfs:- ...       writeClause([ -cdh(C1,D,H), -cdh(C2,D,H), -cp(C1,P), -cp(C2,P) ]), fail. 
+noOverlapProfs:- courseProfessors(C1, LP1), courseProfessors(C2, LP2), member(P, LP1), member(P, LP2), C1 \= C2, day(D), hour(H),
+    writeClause([ -cdh(C1,D,H), -cdh(C2,D,H), -cp(C1,P), -cp(C2,P) ]), fail. 
 noOverlapProfs.
 
-noOverlapRooms:- ...
+noOverlapRooms:-  courseRooms(C1, Rs1), courseRooms(C2, Rs2), C1 \= C2, day(D), hour(H), 
+    member(R, Rs1), member(R, Rs2), writeClause([ -cdh(C1,D,H), -cdh(C2,D,H), -cr(C1, R), -cr(C2, R)]), fail.
 noOverlapRooms.
 
-relateVarsCPwithUsedProf:- ...
+relateVarsCPwithUsedProf:- professor(P), findall(cp(C, P), course(C), L), expressOr(usedProf(P), L), fail. %append([-usedProf(P)], L, ApL), writeClause(ApL), fail.
 relateVarsCPwithUsedProf.
 
-maxProfs(MaxNumProf):- ...
+maxProfs(MaxNumProf):- findall(usedProf(P), professor(P), L), atMost(MaxNumProf, L), fail.
 maxProfs(_).
 
 
