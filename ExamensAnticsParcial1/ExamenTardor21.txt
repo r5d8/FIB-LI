@@ -1,0 +1,148 @@
+--------------------------------------------------------------------------------------------------
+Logic in Computer Science, November 9th, 2021. Time: 1h30min. No books or lecture notes allowed.
+--------------------------------------------------------------------------------------------------
+-Insert your answers on the dotted lines ... below, and only there.
+-Do NOT modify the problems or the @nota lines.
+-When finished, upload this file with the same name: exam.txt
+-Use the text symbols:     &     v    -       ->          |=        A       E
+   for                    AND   OR   NOT   IMPLIES   "SATISFIES"  FORALL  EXISTS  etc.,  like in:
+   I  |=  p & (q v -r)     (the interpretation I satisfies the formula p & (q v -r)  ).
+   You can write subindices using "_". For example write x_i to denote x-sub-i.
+--------------------------------------------------------------------------------------------------
+
+
+Problem 1. (3 points).                                   @n@nota1:
+
+
+1a)
+Let F and G be propositional formulas such that F is satisfiable and F -> G is also satisfiable.
+Is it true that G is satisfiable? Prove it using only the definitions of propositional logic.
+
+F -> G	SAT						-> (enunciat)
+EI eval_I(F->G) = 1					-> (def sat)
+EI eval_I(-F v G) = 1					-> (def evaluació)
+EI eval_I(-F v G) = max(eval_I(-F), eval_I(G)) = 1	->
+EI max(1 - eval_I(F), eval_I(G)) = 1			->	
+EI max(1-1, eval_I(G)) = 1 				->	NO!!! la eval_I(F) és una altre
+EI eval_I(G) = 1 					->
+G SAT
+
+CONTRAEXEMPLE: F = p, G = p & -p
+
+1b)
+Let F and G be propositional formulas such that F is a tautology.
+Is it true that  F & G  is logically equivalent to G?
+Prove it using only the definitions of propositional logic.
+
+F & G							<-> (enunciat)
+EI eval_I(F & G) = 1					<-> (def sat)
+EI min(eval_I(F), eval_I(G)) = 1			<->
+EI min(1, eval_I(G)) = 1				<-> (com que F és taut, AI eval_I(F)=1)
+EI eval_I(G) = 1 					<->
+G
+
+///////Solució
+Yes. This is true.
+F & G   is logically equivalent to  G                       iff   by def of logical equivalence
+F & G   has the same models as  G                           iff   by def of model
+forall I,   I |= F & G   iff  I |= G                        iff   by def of |= 
+forall I,   eval_I( F & G ) =  eval_I( G )                  iff   by def eval AND
+forall I,   min( eval_I( F ), eval_I(G )  ) =  eval_I( G )  iff   since F is a tautology, we have eval_I(F)=1 for all I (see *)
+forall I,   min( 1, eval_I( G )  ) =  eval_I( G )           iff   since eval always returns either 0 or 1
+forall I,           eval_I( G )    =  eval_I( G )           iff   true
+
+*:
+F is a tautology                iff  by def of tautology
+forall I  we have I |= F        iff  by def of |= 
+forall I  we have eval_I(F)=1
+/////
+
+--------------------------------------------------------------------------------------------------
+
+Problem 2. (3 points).                                   @n@nota2:
+
+A 1in3-constraint is an expression of the form  1in3( lit1, lit2, lit3 ) where lit1,lit2 and lit3 are literals.
+An interpretation I satisfies  1in3( lit1, lit2, lit3 )  if it satisfies EXACTLY ONE of lit1, lit2 and lit3.
+The 1in3-SAT problem is the problem of deciding the satisfiability of a conjunction (AND) of 1in3-constraints.
+For example,
+1in3(x,y,z)  &  1in3(-x,-y, z) &  1in3(-x,y,-z)   is satisfiable (if I(x)=1, I(y)=0, I(z)=0 then I is a model)
+but 
+1in3(x,y,z)  &  1in3(-x,-y,-z)   is unsatisfiable.
+
+
+2a) Is 1in3-SAT in NP? Explain in a few words why.
+
+Yes, because given a model, you can evaluate it in polynomic/linear time.
+
+
+2b) Let C be a normal 3-SAT clause  l1 v l2 v l3, where l1,l2,l3 are literals over variables x,y,z.
+    Let F be:   1in3(-l1,a,b)  &  1in3(l2,b,c)  &  1in3(-l3,c,d)   (here a,b,c,d are variables).
+    Check for each one of the 7 possible models I of C that then F has a model I' such
+    that I' "extends" I, that is I(x)=I'(x), I(y)=I'(y), I(z)=I'(z).
+    
+    Similarly, check that for the (unique) I that is NOT a model of C, there is no model I' of F extending I
+    (and therefore every model I' of F extends a model I of C).
+
+x y z 	C	a b c d
+0 0 0	0	- - - - -> NO
+0 0 1	1	0 0 1 0
+0 1 0	1	0 0 0 0
+0 1 1	1	0 0 0 1
+1 0 0	1	0 1 0 0
+1 0 1	1	0 1 0 1
+1 1 0	1	1 0 0 0
+1 1 1	1	1 0 0 1
+
+
+2c) Is 1in3-SAT NP-complete? Explain very briefly why. Hint: use 2a) and 2b).
+
+Yes, it's NP-complete. By a) we have that it's NP. By b) we have that it's NP-hard, as we
+could reduce the SAT problem (the 3-SAT problem, for being more accurate), and as that's NP-hard,
+our problem is NP-hard too.
+So, as it's NP and NP-hard, it's NP-complete.
+
+
+--------------------------------------------------------------------------------------------------
+
+Problem 3. (3 points).                                   @n@nota3:
+For each one of the following problems, show that it is polynomial by expressing it as (or
+reducing it to) a polynomial version of SAT.  Be very brief: just give the needed SAT variables and
+clauses and say which polynomial SAT problem it is.  If there is no such reduction, just write: "Not possible".
+
+3a) 2-coloring: given an undirected graph G and 2 colors,
+can we assign a color to each node of G such that adyacent nodes get different colors?
+
+Yes, it's linear. 
+////Falta assignar vars
+Les variables serian X_ij, on i és un node i j un color.
+
+3b) 3-coloring.
+
+No. Es NP-complet, pq es pot resoldre amb 3-SAT
+Les variables serian X_ij, on i és un node i j un color.
+
+3c) Amazon. Assume
+    M is a list of Amazon products we MUST buy.
+    P is a list of pairs (p,p') of products that are incompatible: we cannot buy p and also p'.
+    R is a list of rules of the form "S needs p", indicating that, if we buy
+          all products in the set of products S, then we must also buy the product p.
+    Given M,P,R, can we buy a set of products satisfying the requirements of M,P,R?
+
+M is a set of true variables, (clauses with 1 element)
+P ccan be expressed as clauses of the porm atMost(1, [p, p'])
+R can be expressed as clauses of the form -S_0 v -S_1 v ... v -S_n v p
+As the elements in S can be any nmber, this cannot be solved in polynomial time.
+
+
+--------------------------------------------------------------------------------------------------
+
+Problem 4. (1 point ).                                   @n@nota4:
+
+4) UNIQUE-SAT is the problem of determining whether a given set of clauses S has exactly one model.
+Explain very briefly how you would use a SAT solver to decide UNIQUE-SAT.
+
+You execute the program and se if a model exists. Then you add the model negated, and run it again.
+If it's unsat this second time -> UNIQUE-SAT
+
+--------------------------------------------------------------------------------------------------
+

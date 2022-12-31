@@ -1,0 +1,87 @@
+--------------------------------------------------------------------------------------------------
+Logic in Computer Science, ?, 2021. Time: 1h30min. No books or lecture notes allowed.
+--------------------------------------------------------------------------------------------------
+-Insert your answers on the dotted lines ... below, and only there.
+-Do NOT modify the problems or the @nota lines.
+-When finished, upload this file with the same name: exam.txt
+-Use the text symbols:     &     v    -       ->          |=        A       E
+   for                    AND   OR   NOT   IMPLIES   "SATISFIES"  FORALL  EXISTS  etc.,  like in:
+   I  |=  p & (q v -r)     (the interpretation I satisfies the formula p & (q v -r)  ).
+   You can write subindices using "_". For example write x_i to denote x-sub-i.
+--------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------
+1) (3 points) Prove your answers using only the formal definitions of propositional logic
+
+
+a)Is it true that if F, G, H are formulas such that F ∧ G  |/= H then F ∧ G ∧ H is unsatisfiable?	// |/= no consecuencia lógica
+
+False.
+Supose F = p, G = p, H =q.
+
+p = 1, q = 1	->	F & G = 1, F & G & H = p & p & q = 1   -> SAT
+p1 q0 no conseq logica
+
+b) Let F be a tautology, and let G an unsatisfiable formula. Is it true true that F ∧ ¬G is a
+tautology?
+
+True.
+F taut y G insat			->	(def taut and insat)
+AI, eval_I(F) = 1 y eval_I(G) = 0	->	(aritmetica)
+AI, eval_I(F) = 1 y 1-eval_I(G) = 1	->	(def -)
+AI, eval_I(F) = 1 y eval_I(-G) = 1	->	(aritmetica)
+AI, min(eval_I(F), eval_I(-G)) = 1	->	(def minim)
+AI, eval_I(F & (-G)) = 1		->	(def |=)
+AI, I |= F & (-G)			->	(def taut)
+F & -G is taut
+
+
+--------------------------------------------------------------------------------------------------
+2) (2 points) The problem called “minOnes” takes as input a natural number k and a propositional
+formula F over propositional variables {x1 . . . , xn}. Its aim is to decide if there is any model I of F
+with at most k ones, that is, any model I such that I(x1) + . . . + I(xn) ≤ k.
+Answer in a few words: Is minOnes NP-hard? Why?
+
+Yes, it's NP-Hard, because we can reduce SAT to it.
+
+--------------------------------------------------------------------------------------------------
+3) (2 points) Every propositional formula F over n variables can also expressed by a Boolean circuit
+with n inputs and one output. In fact, sometimes the circuit can be much smaller than F because
+each subformula only needs to be represented once. For example, if F is
+x1 ∧ (x3 ∧ x4 ∨ x3 ∧ x4) ∨ x2 ∧ (x3 ∧ x4 ∨ x3 ∧ x4),
+a circuit C for F with only five gates exists. Giving names ai to the output wires of each logical gate,
+and using a0 as the output of C, we can write C as:
+a0 = or(a1,a2) a1 = and(x1,a3) a3 = or(a4,a4)
+a2 = and(x2,a3) a4 = and(x3,x4)
+Explain very briefly what do you think is the best way to use a standard SAT solver for CNFs to
+determine whether two circuits C1 and C2, represented like this, are logically equivalent.
+Note: assume different names b0, b1, b2 . . . are used for the internal wires of C2.
+
+The best way is to express the circuits as clauses and variables, (they can be transformed using the Tseitin
+transformation, which enables the use of auxiliar variables, and is easily done in a tree that can be
+constructed from the circuits). Wen we have the 2 sets of clauses, S1, S2
+# being F and G, we then join them as F & -G. As we have seen in theory class, 2 formulas are logicaly equivalent iff F & -G is insat.
+# idea okey, but we have to put S1 U S2 U {-a0 v -b0, a0 v b0}. The top variables represent the model, and can express what intended
+--------------------------------------------------------------------------------------------------
+4) (3 points) Consider the cardinality constraint x1 + x2 + x3 + x4 + x5 + x6 ≤ 4 (expressing that at
+most 4 of the propositional symbols {x1, x2, x3, x4, x5, x6} are true)
+
+a) Write the clauses needed to encode this constraint using no auxiliary variables.
+-x_1 v -x_2 v -x_3 v -x_4 v -x_5
+-x_1 v -x_2 v -x_3 v -x_4 v -x_6
+-x_1 v -x_2 v -x_3 v -x_6 v -x_5
+-x_1 v -x_2 v -x_6 v -x_4 v -x_5
+-x_1 v -x_6 v -x_3 v -x_4 v -x_5
+-x_6 v -x_2 v -x_3 v -x_4 v -x_5
+
+b) In general, in terms of n and k, how many clauses are needed to encode a cardinality constraint
+x1 + . . . + xn ≤ k using no auxiliary variables? (give no explanations here)
+n choose k+1
+
+c) Write the names of any other encoding you know for cardinality constraints x1 + . . . + xn ≤ k,
+an encoding that do use auxiliary variables. In terms of n and k, how many clauses are needed? (give
+no explanations here).
+
+sorting networks	O(n lg^2 n)
+cardinality networks	O(n lg^2 k)
+--------------------------------------------------------------------------------------------------

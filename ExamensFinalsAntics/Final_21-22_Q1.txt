@@ -1,0 +1,203 @@
+--------------------------------------------------------------------------------------------------
+Logic in Computer Science, January 13th, 2021. Time: 2h30min. No books or lecture notes allowed.
+--------------------------------------------------------------------------------------------------
+Note on evaluation: eval(propositional logic) = max(eval(Problems 1,2,3), eval(partial exam))
+                    eval(first-order logic)   = eval(Problems 4,5,6).
+
+-Insert your answers on the dotted lines ... below, and only there.
+-Do NOT modify the problems or the @nota lines.
+-When finished, upload this file with the same name: exam.txt
+-Use the text symbols:     &     v    -       ->          |=        A       E
+   for                    AND   OR   NOT   IMPLIES   "SATISFIES"  FORALL  EXISTS,  like in:
+   I  |=  p & (q v -r)     (the interpretation I satisfies the formula p & (q v -r)  ).
+   You can write subindices using "_". For example write x_i to denote x-sub-i.
+--------------------------------------------------------------------------------------------------
+
+
+
+Problem 1. (4 points).                                   @n@nota1:
+
+
+1a) Is it true that for any three propositional formulas F, G, H, we have that F & (G v H) is a
+tautology iff (-G & H) v -F is unsatisfiable? Prove it using only the definition of propositional logic.
+
+By definition, a formula K is a TAUTOLOGY iff -K is unsatisfiable.
+So, F & (G v H) TAUT iff -(F & (G v H)) unsat
+
+-(F & (G v H)) 	unsat	iff
+-F v -(G v H)	unsat	iff
+-F v (-G & -H)	unsat	iff
+(-G & -H) v -F  unsat
+
+As we can see, 	it needs to be (-G & -H) v -F unsat not (-G & H) v -F unsat, so it's FALSE.
+
+1b) Is it true that for any two propositional formulas F and G, we have that -F v G is a tautology
+if and only if F |= G? Prove it using only the definition of propositional logic.
+
+True.
+
+-F v G taut				iff	def tautology
+AI I |= -F v G				iff	def satisfaiability
+AI eval_I(-F) = 1 v eval_I(G) = 1	iff
+AI 1-eval_I(F) = 1 v eval_I(G) = 1	iff
+AI eval_I(F) = 0 v eval_I(G) = 1
+... no entenc la demostració
+
+--------------------------------------------------------------------------------------------------
+
+Problem 2. (3 points).                                   @n@nota2:	0.6
+For each one of the following statements, indicate if it is true or false for propositional logic.
+Answer T (true) or F (false) on each dotted line ... Give no explanations why.
+Below always F,G,H are formulas, I is an interpretation and S is a set of clauses.
+Note: Wrong ansers subtract 0.4 points. Unanswered questions subtract 0.2 points.
+
+     Answer:
+ 1)    F...    If F is unsatisfiable, then -F |= F.
+ 2)    F...    The closure under resolution Res(S) of a finite set of clauses S is always a DNF.
+ 3)    T...    It is decidable in polynomial time whether a given formula in DNF is satisfiable.
+ 4)    T...F   The Tseitin transformation of a formula F is a set of clauses that is logically equivalent to F.
+ 5)    T...    If F is a unsatisfiable, then for every G we have F |= G.
+ 6)    F...T   The Tseitin transformation of a formula F always has a number of clauses that is linear in the size of F.
+ 7)    T...    The Tseitin transformation can be used for reducing SAT to 3-SAT.
+ 8)    T...F   It is decidable in polynomial time whether a given formula is a tautology.
+ 9)    F...T   The closure under resolution Res(S) of a finite set of clauses S is always a finite set of clauses.
+10)    F...    The formula  p v p  is a logical consequence of  (p v r)  &  (-q v r)  &  (q v r). 
+11)    T...    It is decidable in polynomial time whether a given formula in CNF is a tautology.
+12)    T...    Given I and F, it is decidable in linear time whether I |= F.
+13)    T...    There are formulas F and G such that  F |= G  and  F |= -G.
+14)    F...T   If  F v G  |=  H  then F & -H is unsatisfiable. 
+15)    F...    The closure under resolution Res(S) always has a number of clauses that is cubic in the size of S.
+16)    F...T   If F is a tautology, then for every G we have G |= F.
+
+
+--------------------------------------------------------------------------------------------------
+
+
+Problem 3. (3 points).                                   @n@nota3:
+
+We want to 3-color a given graph with n nodes: assign one of the 3 colors to each
+node such that for each edge (u,v), nodes u and v do not get the same color of the three colors.
+Of course this may be impossible, so we will allow some nodes to remain uncolored: these nodes get no color.
+Now use a SAT solver to compute the 3-coloring with the minimal number of such uncolored nodes.
+Explain very briefly:
+
+3a) The propositional symbols (variables) you use and their meaning (hint: use a special one no_i meaning "node i gets no color")
+
+...
+
+3b) The clauses and constraints you use (no need to explain how the constraint is encoded into clauses)
+
+...
+
+3c) How you optimize by means of different calls to the SAT solver
+
+...
+
+
+--------------------------------------------------------------------------------------------------
+-----------------------     First-Order Logic:   -------------------------------------------------
+--------------------------------------------------------------------------------------------------
+
+
+Problem 4. (3 points).                                   @n@nota4:
+
+John has written a C++ program P that takes as input an arbitrary first-order formula F.  He
+says that, if F is a tautology, P always outputs "yes" after a finite amount of time, and if F
+is NOT a tautology, P outputs "no" or it does not terminate.  Is this possible?  If this is not
+possible, explain why. If it is possible, explain how and why P would work.
+
+Yes. TAUT in FOL is semi-decidable. F is TAUT IFF -F insat iff S=clausalForm(-F) insat iff [] is in ResFact(S).
+
+--------------------------------------------------------------------------------------------------
+
+Problem 5. (3 points).                                   @n@nota5:
+
+5a) Is the formula Ax Ey ( p(f(x),y) & -p(x,y) )  satisfiable? Prove it.
+
+D = {0, 1}
+p (0, 0) = 1
+p (0, 1) = 0
+p (1, 0) = 0
+p (1, 1) = 1
+f(0) = 1
+f(1) = 1
+
+If x = 0 pick y = 1
+If x = 1 pick y = 0
+
+5b) Are the following two formulas F and G logically equivalent? Prove it a simply as you can.
+F:   Ax Ey ( p(f(x),y) & -p(x,y) )
+G:   Ey Ax ( p(f(x),y) v -p(x,y) )
+
+No.
+Same example as before saisfies F, but doesn't satisfy G.
+
+--------------------------------------------------------------------------------------------------
+
+Problem 6. (4 points).                                   @n@nota6:
+
+Formalise the following sentences in first-order logic and prove by resolution that the last
+one (g) is a logical consequence of the others a & b & c & d & e & f.
+
+a: If a king is magic then he steals from all his citizens.
+b: A king is magic if he is the son of a magic king.
+c: Johnny is a magic king.
+d: Phil is the son of Johnny.
+e: Mary is a citizen of Phil.
+f: Phil does not steal from Mary.
+g: This year FC Barcelona will win the League.
+
+
+a: AxAy ( magic_king(x) -> (cityzen(x, y) -> steals(x, y))
+	AxAy ( - magic_king(x) V ( -cityzen(x, y) V steals(x, y) ) )
+	AxAy ( - magic_king(x) V -cityzen(x, y) V steals(x, y) )
+	       - magic_king(x) V -cityzen(x, y) V steals(x, y) 
+/*
+NOOOO b: Ax ( magic_king(x) -> (Ey (father(x, y) & magic_king(y))))				-- Implicació al revés
+	Ax ( - magic_king(x) V (Ey (father(x, y) & magic_king(y)) ))
+	Ax ( - magic_king(x) V father(x, f_y(x)) & magic_king(f_y(x))) )
+	Ax ( (- magic_king(x) V father(x, f_y(x))) & (- magic_king(x) V magic_king(f_y(x) ) )
+	(- magic_king(x) V father(x, f_y(x))) & (- magic_king(x) V magic_king(f_y(x)))
+*/
+
+b: 	Ax (Ey (father(x, y) & magic_king(y)) -> magic_king(x))
+	Ax (-Ey (father(x, y) & magic_king(y)) V magic_king(x))
+	Ax (Ay -(father(x, y) & magic_king(y)) V magic_king(x))
+	Ax (Ay (-father(x, y) V -magic_king(y)) V magic_king(x))
+	AxAy (  -father(x, y) V -magic_king(y) V magic_king(x)  )
+		-father(x, y) V -magic_king(y) V magic_king(x)
+c: magic_king(Johnny)
+d: father(Phil, Johnny)
+e: cityzen(Phil, Mary)
+f: -steals(Phil, Mary)
+g: will_win_the_League_this_year(FCB)
+
+As g has nothing to do with the other clauses, we need to show that a & b & c & d & e & f is unsat.
+
+h: Res(b, c)
+	-father(x, y) V -magic_king(y) V magic_king(x)		magic_king(Johnny)
+	---------------------------------------------------------------------------     mgu = {y = Johnny}
+				-father(x, Johnny) V magic_king(x)
+i: Res(h, d)
+	-father(x, Johnny) V magic_king(x)		father(Phil, Johnny)
+	--------------------------------------------------------------------	mgu = {x = Phil}
+				magic_king(Phil)	
+
+j: Res(a, i)
+	 - magic_king(x) V -cityzen(x, y) V steals(x, y)	magic_king(Phil)
+	------------------------------------------------------------------------	mgu = {x = Phil}
+				-cityzen(Phil, y) V steals(Phil, y)
+
+k: Res(j, e)
+	-cityzen(Phil, y) V steals(Phil, y)		cityzen(Phil, Mary)
+	-------------------------------------------------------------------	mgu = {y = Mary}
+				steals(Phil, Mary)
+
+l: Res(k, f)
+	-steals(Phil, Mary)	steals(Phil, Mary)
+	------------------------------------------	mgu = {}
+			[]
+
+As the empty clause has appeared in the resolution, we can ensure that a & b & c & d & e & f is unsat, so a & b & c & d & e & f |= g
+--------------------------------------------------------------------------------------------------
+
